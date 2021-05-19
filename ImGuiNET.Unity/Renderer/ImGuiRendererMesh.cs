@@ -132,7 +132,7 @@ namespace ImGuiNET.Unity
                 vtxOf += vtxArray.Length;
                 idxOf += idxArray.Length;
             }
-			_mesh.SetSubMeshes(descriptor, NoMeshChecks);
+			_mesh.SetSubMeshes(_descriptors, NoMeshChecks);
             _mesh.UploadMeshData(false);
         }
 
