@@ -3,6 +3,7 @@ using UnityEngine.Rendering;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Profiling;
+using System.Collections.Generic;
 
 namespace ImGuiNET.Unity
 {
@@ -12,6 +13,8 @@ namespace ImGuiNET.Unity
     /// </summary>
     sealed class ImGuiRendererMesh : IImGuiRenderer
     {
+		List<SubMeshDescriptor> _descriptors = new List<SubMeshDescriptor>();
+
         readonly Shader _shader;
         readonly int _texID;
 
@@ -96,7 +99,7 @@ namespace ImGuiNET.Unity
             // upload data into mesh
             int vtxOf = 0;
             int idxOf = 0;
-            int subOf = 0;
+            _descriptors.Clear();
             for (int n = 0, nMax = drawData.CmdListsCount; n < nMax; ++n)
             {
                 ImDrawListPtr drawList = drawData.CmdListsRange[n];
@@ -124,11 +127,12 @@ namespace ImGuiNET.Unity
                         indexCount = (int)cmd.ElemCount,
                         baseVertex = vtxOf + (int)cmd.VtxOffset,
                     };
-                    _mesh.SetSubMesh(subOf++, descriptor, NoMeshChecks);
+					_descriptors.Add(descriptor);
                 }
                 vtxOf += vtxArray.Length;
                 idxOf += idxArray.Length;
             }
+			_mesh.SetSubMeshes(descriptor, NoMeshChecks);
             _mesh.UploadMeshData(false);
         }
 
